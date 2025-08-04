@@ -338,15 +338,14 @@ const UniversalVideoPlayer: React.FC<UniversalVideoPlayerProps> = ({
           debug: false,
           xhrSetup: (xhr, url) => {
             xhr.withCredentials = false;
-            // Adicionar token de autenticação apenas para URLs do backend
-            if (src && (src.includes('/api/videos-ssh/') || src.includes('/content/')) && !url.includes('@')) {
+            // Adicionar token de autenticação para URLs SSH e content
+            if (src && (src.includes('/api/videos-ssh/') || src.includes('/content/') || url.includes('/api/videos-ssh/'))) {
               const token = localStorage.getItem('auth_token');
               if (token) {
                 xhr.setRequestHeader('Authorization', `Bearer ${token}`);
               }
             }
-            // Timeout otimizado baseado no tipo de URL
-            xhr.timeout = url.includes('@') ? 30000 : 15000; // Mais tempo para URLs diretas do Wowza
+            xhr.timeout = src.includes('/api/videos-ssh/') ? 15000 : 10000; // Timeout otimizado
           }
         });
 
@@ -435,16 +434,13 @@ const UniversalVideoPlayer: React.FC<UniversalVideoPlayerProps> = ({
       if (src && src.includes('/api/videos-ssh/')) {
         video.setAttribute('preload', 'metadata'); // Carregar metadados para melhor UX
         
-        // Para vídeos SSH, adicionar token como parâmetro na URL se não estiver presente
-        const token = localStorage.getItem('auth_token');
-        if (token && !videoUrl.includes('token=')) {
-          const urlWithToken = `${videoUrl}${videoUrl.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`;
-          video.src = urlWithToken;
-        } else {
-          video.src = videoUrl;
-        }
+        video.src = videoUrl;
       }
-
+      // Para URLs diretas do Wowza (com @), não adicionar token
+      else if (src && videoUrl.includes('@')) {
+        video.setAttribute('preload', 'metadata');
+        video.src = videoUrl;
+      }
       // Para vídeos via /content, também configurar headers de autenticação
       else if (src && src.includes('/content/')) {
         const token = localStorage.getItem('auth_token');
@@ -459,8 +455,8 @@ const UniversalVideoPlayer: React.FC<UniversalVideoPlayerProps> = ({
         video.src = src;
       }
 
-      // Só chamar load() se não for SSH (pois já foi definido acima)
-      if (!src.includes('/api/videos-ssh/')) {
+      // Só chamar load() se não for URL direta do Wowza
+      if (!videoUrl.includes('@')) {
         video.load();
       }
 
