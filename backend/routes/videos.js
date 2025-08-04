@@ -33,20 +33,28 @@ const upload = multer({
     fileSize: 2 * 1024 * 1024 * 1024
   },
   fileFilter: (req, file, cb) => {
+    // Lista expandida de tipos MIME para vídeos
     const allowedTypes = [
-      'video/mp4', 'video/avi', 'video/quicktime', 'video/x-msvideo', 'video/wmv', 
-      'video/flv', 'video/webm', 'video/mkv'
+      'video/mp4', 'video/avi', 'video/quicktime', 'video/x-msvideo', 
+      'video/wmv', 'video/x-ms-wmv', 'video/flv', 'video/x-flv',
+      'video/webm', 'video/mkv', 'video/x-matroska', 'video/3gpp',
+      'video/3gpp2', 'video/mp2t', 'video/mpeg', 'video/ogg',
+      'application/octet-stream' // Para arquivos que podem não ter MIME correto
     ];
     
-    // Verificar também por extensão para arquivos .mov
+    // Verificar também por extensão para todos os formatos
     const fileName = file.originalname.toLowerCase();
-    const hasValidExtension = ['.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mkv'].some(ext => 
+    const hasValidExtension = [
+      '.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mkv', 
+      '.3gp', '.3g2', '.ts', '.mpg', '.mpeg', '.ogv', '.m4v', '.asf'
+    ].some(ext => 
       fileName.endsWith(ext)
     );
+    
     if (allowedTypes.includes(file.mimetype) || hasValidExtension) {
       cb(null, true);
     } else {
-      cb(new Error(`Tipo de arquivo não suportado: ${file.mimetype}. Extensões aceitas: .mp4, .avi, .mov, .wmv, .flv, .webm, .mkv`), false);
+      cb(new Error(`Tipo de arquivo não suportado: ${file.mimetype}. Extensões aceitas: .mp4, .avi, .mov, .wmv, .flv, .webm, .mkv, .3gp, .ts, .mpg, .ogv, .m4v`), false);
     }
   }
 });

@@ -460,7 +460,10 @@ class VideoSSHManager {
             }
 
             // Verificar se é um arquivo de vídeo válido
-            const videoExtensions = ['.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mkv'];
+            const videoExtensions = [
+                '.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mkv',
+                '.3gp', '.3g2', '.ts', '.mpg', '.mpeg', '.ogv', '.m4v', '.asf'
+            ];
             const extension = path.extname(remotePath).toLowerCase();
             
             if (!videoExtensions.includes(extension)) {

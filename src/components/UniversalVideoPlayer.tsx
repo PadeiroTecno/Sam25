@@ -128,6 +128,7 @@ const UniversalVideoPlayer: React.FC<UniversalVideoPlayerProps> = ({
       case 'mp4':
         return 'mp4';
       case 'webm':
+      case '.ogv':
         return 'webm';
       case 'ogg':
         return 'ogg';
@@ -136,6 +137,13 @@ const UniversalVideoPlayer: React.FC<UniversalVideoPlayerProps> = ({
       case 'wmv':
       case 'flv':
       case 'mkv':
+      case '.3gp':
+      case '.3g2':
+      case '.ts':
+      case '.mpg':
+      case '.mpeg':
+      case '.m4v':
+      case '.asf':
         return 'video';
       default:
         return 'video'; // Default para vídeo em vez de unknown
