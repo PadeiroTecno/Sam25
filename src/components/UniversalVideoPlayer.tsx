@@ -338,14 +338,15 @@ const UniversalVideoPlayer: React.FC<UniversalVideoPlayerProps> = ({
           debug: false,
           xhrSetup: (xhr, url) => {
             xhr.withCredentials = false;
-            // Adicionar token de autenticação para URLs SSH e content
-            if (src && (src.includes('/api/videos-ssh/') || src.includes('/content/') || url.includes('/api/videos-ssh/'))) {
+            // Adicionar token de autenticação apenas para URLs do backend
+            if (src && (src.includes('/api/videos-ssh/') || src.includes('/content/')) && !url.includes('@')) {
               const token = localStorage.getItem('auth_token');
               if (token) {
                 xhr.setRequestHeader('Authorization', `Bearer ${token}`);
               }
             }
-            xhr.timeout = src.includes('/api/videos-ssh/') ? 15000 : 10000; // Timeout otimizado
+            // Timeout otimizado baseado no tipo de URL
+            xhr.timeout = url.includes('@') ? 30000 : 15000; // Mais tempo para URLs diretas do Wowza
           }
         });
 

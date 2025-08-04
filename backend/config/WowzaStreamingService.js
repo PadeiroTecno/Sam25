@@ -329,16 +329,20 @@ class WowzaStreamingService {
 
     // Construir URL correta para vídeos VOD
     buildVideoUrl(userLogin, folderName, fileName) {
-        // Detectar extensão do arquivo
-        const fileExtension = fileName.split('.').pop().toLowerCase();
-        
         // Construir caminho correto para o Wowza
         const streamPath = `${userLogin}/${folderName}/${fileName}`;
         
+        // Para VOD, usar URLs diretas com autenticação
+        const isProduction = process.env.NODE_ENV === 'production';
+        const wowzaHost = isProduction ? 'samhost.wcore.com.br' : this.wowzaHost;
+        const wowzaUser = 'admin';
+        const wowzaPassword = 'FK38Ca2SuE6jvJXed97VMn';
+        
         return {
-            hlsUrl: `/${streamPath}`,
-            rtmpUrl: `/${streamPath}`,
-            directUrl: `/${streamPath}`
+            hlsUrl: `http://${wowzaHost}:1935/vod/${streamPath}/playlist.m3u8`,
+            rtmpUrl: `rtmp://${wowzaHost}:1935/vod/${streamPath}`,
+            directUrl: `http://${wowzaUser}:${wowzaPassword}@${wowzaHost}:6980/content/${streamPath}`,
+            proxyUrl: `/content/${streamPath}`
         };
     }
 

@@ -51,14 +51,34 @@ const Dashboard: React.FC = () => {
   const openVideoInNewTab = (video: PlaylistVideo) => {
     const isProduction = window.location.hostname !== 'localhost';
     const wowzaHost = isProduction ? 'samhost.wcore.com.br' : '51.222.156.223';
+    const wowzaUser = 'admin';
+    const wowzaPassword = 'FK38Ca2SuE6jvJXed97VMn';
     
     if (video.videos.url) {
-      let externalUrl = video.videos.url;
-      if (video.videos.url.startsWith('/content')) {
-        externalUrl = `http://${wowzaHost}:6980${video.videos.url}`;
+      let externalUrl;
+      
+      // Para vídeos SSH, construir URL direta
+      if (video.videos.url.includes('/api/videos-ssh/')) {
+        try {
+          const videoId = video.videos.url.split('/stream/')[1]?.split('?')[0];
+          if (videoId) {
+            const remotePath = Buffer.from(videoId, 'base64').toString('utf-8');
+            const relativePath = remotePath.replace('/usr/local/WowzaStreamingEngine/content', '');
+            externalUrl = `http://${wowzaUser}:${wowzaPassword}@${wowzaHost}:6980/content${relativePath}`;
+          } else {
+            externalUrl = video.videos.url;
+          }
+        } catch (error) {
+          externalUrl = video.videos.url;
+        }
+      } else if (video.videos.url.startsWith('/content')) {
+        externalUrl = `http://${wowzaUser}:${wowzaPassword}@${wowzaHost}:6980${video.videos.url}`;
       } else if (!video.videos.url.startsWith('http')) {
-        externalUrl = `http://${wowzaHost}:6980/content/${video.videos.url}`;
+        externalUrl = `http://${wowzaUser}:${wowzaPassword}@${wowzaHost}:6980/content/${video.videos.url}`;
+      } else {
+        externalUrl = video.videos.url;
       }
+      
       window.open(externalUrl, '_blank');
     }
   };

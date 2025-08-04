@@ -59,9 +59,26 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playlistVideo, onVideoEnd }) 
       return url;
     }
     
-    // Para vídeos SSH, usar a URL diretamente
-    if (url.includes('/api/videos-ssh/')) {
-      return url;
+    // Para vídeos SSH, sempre usar URL direta do Wowza para melhor performance
+    if (url.includes('/api/videos-ssh/stream/')) {
+      // Extrair o videoId e construir URL direta do Wowza
+      const videoId = url.split('/stream/')[1]?.split('?')[0];
+      if (videoId) {
+        try {
+          const remotePath = Buffer.from(videoId, 'base64').toString('utf-8');
+          const isProduction = window.location.hostname !== 'localhost';
+          const wowzaHost = isProduction ? 'samhost.wcore.com.br' : '51.222.156.223';
+          const wowzaUser = 'admin';
+          const wowzaPassword = 'FK38Ca2SuE6jvJXed97VMn';
+          
+          // Construir URL direta do Wowza para melhor performance
+          const relativePath = remotePath.replace('/usr/local/WowzaStreamingEngine/content', '');
+          return `http://${wowzaUser}:${wowzaPassword}@${wowzaHost}:6980/content${relativePath}`;
+        } catch (error) {
+          console.warn('Erro ao decodificar videoId, usando URL original:', error);
+          return url;
+        }
+      }
     }
     
     // Para arquivos locais, sempre usar o proxy /content do backend

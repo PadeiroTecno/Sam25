@@ -288,11 +288,36 @@ router.get('/stream/:videoId', async (req, res) => {
       case '.wmv':
         res.setHeader('Content-Type', 'video/x-ms-wmv');
         break;
+      case '.flv':
+        res.setHeader('Content-Type', 'video/x-flv');
+        break;
       case '.webm':
         res.setHeader('Content-Type', 'video/webm');
         break;
       case '.mkv':
         res.setHeader('Content-Type', 'video/x-matroska');
+        break;
+      case '.3gp':
+        res.setHeader('Content-Type', 'video/3gpp');
+        break;
+      case '.3g2':
+        res.setHeader('Content-Type', 'video/3gpp2');
+        break;
+      case '.ts':
+        res.setHeader('Content-Type', 'video/mp2t');
+        break;
+      case '.mpg':
+      case '.mpeg':
+        res.setHeader('Content-Type', 'video/mpeg');
+        break;
+      case '.ogv':
+        res.setHeader('Content-Type', 'video/ogg');
+        break;
+      case '.m4v':
+        res.setHeader('Content-Type', 'video/mp4');
+        break;
+      case '.asf':
+        res.setHeader('Content-Type', 'video/x-ms-asf');
         break;
       default:
         res.setHeader('Content-Type', 'video/mp4');

@@ -570,21 +570,11 @@ const Playlists: React.FC = () => {
     if (playlistPlayerIndex < playlistVideosToPlay.length - 1) {
       const nextIndex = playlistPlayerIndex + 1;
       setPlaylistPlayerIndex(nextIndex);
-      
-      let nextVideoUrl = buildVideoUrl(playlistVideosToPlay[nextIndex].url || '');
-      if (nextVideoUrl.includes('/api/videos-ssh/')) {
-        nextVideoUrl = buildOptimizedSSHUrl(nextVideoUrl);
-      }
-      setCurrentVideoUrl(nextVideoUrl);
+      setCurrentVideoUrl(playlistVideosToPlay[nextIndex].url || '');
     } else {
       // Repetir playlist do início
       setPlaylistPlayerIndex(0);
-      
-      let firstVideoUrl = buildVideoUrl(playlistVideosToPlay[0].url || '');
-      if (firstVideoUrl.includes('/api/videos-ssh/')) {
-        firstVideoUrl = buildOptimizedSSHUrl(firstVideoUrl);
-      }
-      setCurrentVideoUrl(firstVideoUrl);
+      setCurrentVideoUrl(playlistVideosToPlay[0].url || '');
     }
   };
 
@@ -592,12 +582,7 @@ const Playlists: React.FC = () => {
     if (playlistPlayerIndex > 0) {
       const prevIndex = playlistPlayerIndex - 1;
       setPlaylistPlayerIndex(prevIndex);
-      
-      let prevVideoUrl = buildVideoUrl(playlistVideosToPlay[prevIndex].url || '');
-      if (prevVideoUrl.includes('/api/videos-ssh/')) {
-        prevVideoUrl = buildOptimizedSSHUrl(prevVideoUrl);
-      }
-      setCurrentVideoUrl(prevVideoUrl);
+      setCurrentVideoUrl(playlistVideosToPlay[prevIndex].url || '');
     }
   };
 
@@ -605,12 +590,7 @@ const Playlists: React.FC = () => {
     if (playlistPlayerIndex < playlistVideosToPlay.length - 1) {
       const nextIndex = playlistPlayerIndex + 1;
       setPlaylistPlayerIndex(nextIndex);
-      
-      let nextVideoUrl = buildVideoUrl(playlistVideosToPlay[nextIndex].url || '');
-      if (nextVideoUrl.includes('/api/videos-ssh/')) {
-        nextVideoUrl = buildOptimizedSSHUrl(nextVideoUrl);
-      }
-      setCurrentVideoUrl(nextVideoUrl);
+      setCurrentVideoUrl(playlistVideosToPlay[nextIndex].url || '');
     }
   };
 

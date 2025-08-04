@@ -134,6 +134,22 @@ router.post('/upload', authMiddleware, upload.single('video'), async (req, res) 
     console.log(`📤 Upload iniciado - Usuário: ${userLogin}, Pasta: ${folderId}, Arquivo: ${req.file.originalname}`);
     console.log(`📋 Tipo MIME: ${req.file.mimetype}, Tamanho: ${req.file.size} bytes`);
     
+    // Verificar se é um formato de vídeo válido
+    const videoExtensions = [
+      '.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mkv',
+      '.3gp', '.3g2', '.ts', '.mpg', '.mpeg', '.ogv', '.m4v', '.asf'
+    ];
+    const fileExtension = path.extname(req.file.originalname).toLowerCase();
+    
+    if (!videoExtensions.includes(fileExtension)) {
+      console.log(`❌ Extensão não suportada: ${fileExtension}`);
+      await fs.unlink(req.file.path).catch(() => {});
+      return res.status(400).json({ 
+        error: `Formato de arquivo não suportado: ${fileExtension}`,
+        details: `Formatos aceitos: ${videoExtensions.join(', ')}`
+      });
+    }
+    
     const duracao = parseInt(req.body.duracao) || 0;
     const tamanho = parseInt(req.body.tamanho) || req.file.size;
 

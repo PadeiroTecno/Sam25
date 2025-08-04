@@ -183,17 +183,25 @@ player.play();`,
   ];
 
   // Função para abrir vídeo em nova aba
-  const openVideoInNewTab = (videoUrl: string) => {
+  const openVideoInNewTab = (videoUrl: string, useDirectWowza = true) => {
     const isProduction = window.location.hostname !== 'localhost';
     const wowzaHost = isProduction ? 'samhost.wcore.com.br' : '51.222.156.223';
+    const wowzaUser = 'admin';
+    const wowzaPassword = 'FK38Ca2SuE6jvJXed97VMn';
     
-    // Construir URL externa do Wowza
-    let externalUrl = videoUrl;
-    if (videoUrl.startsWith('/content')) {
-      externalUrl = `http://${wowzaHost}:6980${videoUrl}`;
+    if (useDirectWowza) {
+      // Usar URL direta do Wowza com autenticação para melhor performance
+      let externalUrl = videoUrl;
+      if (videoUrl.startsWith('/content')) {
+        externalUrl = `http://${wowzaUser}:${wowzaPassword}@${wowzaHost}:6980${videoUrl}`;
+      } else if (!videoUrl.startsWith('http')) {
+        externalUrl = `http://${wowzaUser}:${wowzaPassword}@${wowzaHost}:6980/content/${videoUrl}`;
+      }
+      window.open(externalUrl, '_blank');
+    } else {
+      // Fallback para proxy do backend
+      window.open(videoUrl, '_blank');
     }
-    
-    window.open(externalUrl, '_blank');
   };
   const activatePlayer = (playerId: string) => {
     setActivePlayer(playerId);

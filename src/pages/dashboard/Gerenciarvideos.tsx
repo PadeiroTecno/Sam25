@@ -792,9 +792,23 @@ export default function GerenciarVideos() {
       return;
     }
     
-    const videosParaPlaylist = sshVideos.map(v => {
-      // Usar URL otimizada para playlist
-      const videoUrl = buildOptimizedSSHUrl(v.id);
+    const videosParaPlaylist = sshVideos.map(v => {      
+      // Construir URL direta do Wowza para playlist
+      let videoUrl;
+      try {
+        const remotePath = Buffer.from(v.id, 'base64').toString('utf-8');
+        const isProduction = window.location.hostname !== 'localhost';
+        const wowzaHost = isProduction ? 'samhost.wcore.com.br' : '51.222.156.223';
+        const wowzaUser = 'admin';
+        const wowzaPassword = 'FK38Ca2SuE6jvJXed97VMn';
+        
+        // URL direta do Wowza para reprodução fluida
+        const relativePath = remotePath.replace('/usr/local/WowzaStreamingEngine/content', '');
+        videoUrl = `http://${wowzaUser}:${wowzaPassword}@${wowzaHost}:6980/content${relativePath}`;
+      } catch (error) {
+        console.warn('Erro ao construir URL direta, usando otimizada:', error);
+        videoUrl = buildOptimizedSSHUrl(v.id);
+      }
       
       return {
       id: 0,
